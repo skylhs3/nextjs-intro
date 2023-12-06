@@ -3,20 +3,11 @@ import Head from "next/head";
 import Seo from "@/components/Seo";
 import { useEffect, useState } from "react";
 
-export default function Home() {
-  const [movies, setMovies] = useState();
-
-  useEffect(() => {
-    (async () => {
-      const { results } = await (await fetch(`/api/movies`)).json();
-      setMovies(results);
-    })();
-  }, []);
+export default function Home({results}) {
   return (
     <div className="container">
       <Seo title="Home" />
-      {!movies && <h4>Loading...</h4>}
-      {movies?.map((movie) => (
+      {results?.map( (movie) => (
         <div className="movie" key={movie.id}>
           <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
           <h4>{movie.original_title}</h4>
@@ -48,5 +39,13 @@ export default function Home() {
   );
 }
 
-//APIリードアクセストークン
-//eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmOGIwODVlYzE2NTkzODQ0Mjg3ZDVkOWFiYzhkN2VhOCIsInN1YiI6IjY1NmRlOGE5NGE0YmY2MDEwMzUxMmMxNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.GruIvupM0fgdffuFU91ps8JxWRNUTUCHR5Ut3PQOozw
+export async function getServerSideProps(){
+  const { results } = await (await fetch(`http://localhost:3000/api/movies`)).json();
+
+  return {
+    props: {
+      results,
+    }
+  }
+
+} 
